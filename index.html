@@ -249,10 +249,7 @@ const durationDiv = document.getElementById('duration');
 const volumeSlider = document.getElementById('volume');
 
 //let files = songs.map(f => ({ name: f, filename: 'musics/' + f }));
-let files = songs.map(f => ({ 
-  name: f, 
-  filename: 'musics/' + encodeURIComponent(f.trim()) 
-}));
+let files = songs.map(f => ({ name: f, filename: 'musics/' + encodeURIComponent(f) }));
 
 let currentTrackIndex = -1;
 let isPlaying = false;
@@ -377,6 +374,7 @@ if (files.length > 0) {
 </script>
 </body>
 </html>
+
 
 
 

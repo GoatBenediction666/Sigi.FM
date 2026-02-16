@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Сигареты.фм</title>
+<style>
+  /* Общие стили */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; 
+    padding: 20px;
+    display: flex;
+    height: 100vh;
+    box-sizing: border-box;
+    background: #000000;
+  }
+
+  /* Панель с файлами справа */
+  #file-panel {
+    width: 280px;
+    border: 1px solid #f00;
+    border-radius: 8px;
+    background: #000;
+    padding: 10px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    user-select: none;
+  }
+
+  #file-panel h2 {
+    margin-top: 0;
+    font-size: 18px;
+	color: red;
+    text-align: center;
+  }
+
+  #file-list {
+	color: red;
+    margin-top: 10px;
+	overflow-x: hidden;
+  }
+
+  .file-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f00;
+    transition: background-color 0.25s;
+  }
+  .file-item:hover {
+    background-color: #333;
+  }
+  .active {
+    background-color: #333;
+    font-weight: bold;
+  }
+
+  /* Центр с проигрывателем */
+  #player-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #player-box {
+    border: 2px solid #f00;
+    padding: 30px 40px 40px;
+    border-radius: 12px;
+    background: #000;
+    width: 550px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Название трека */
+  #track-name {
+	font-style: italic;
+    font-size: 20px;
+    margin-bottom: 25px;
+    min-height: 24px;
+    text-align: center;
+    user-select: none;
+	color: red;
+  }
+
+  /* Контролы управления */
+  #controls {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 25px;
+  }
+
+  button.control-btn {
+    font-size: 28px;
+	color: 000;
+    padding: 10px 16px;
+    border: none;
+    background: #f00;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    user-select: none;
+  }
+  button.control-btn:hover {
+    background-color: #333;
+  }
+
+  /* Стилизация прогресс-бара */
+  #progress-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+  }
+
+  #progress {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: #ddd;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  #progress:hover {
+    background: #ccc;
+  }
+  /* Слайдер - ползунок */
+  #progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #f00;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    transition: background-color 0.3s;
+    margin-top: -5px; /* Выравнить по центру */
+  }
+  #progress::-webkit-slider-thumb:hover {
+    background: #333;
+  }
+  #progress::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #555;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    transition: background-color 0.3s;
+  }
+  #progress::-moz-range-thumb:hover {
+    background: #333;
+  }
+  
+  /* Время - слева и справа от прогресса */
+  #current-time,
+  #duration {
+    width: 45px;
+    font-size: 14px;
+    color: #555;
+    user-select: none;
+    text-align: center;
+  }
+  
+  /* громкость */
+  #volume-container {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+  }
+
+  #volume {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: #ddd;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  #volume:hover {
+    background: #ccc;
+  }
+  /* Слайдер - ползунок */
+  #volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #f00;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    transition: background-color 0.3s;
+    margin-top: -5px; /* Выравнить по центру */
+  }
+  #volume::-webkit-slider-thumb:hover {
+    background: #333;
+  }
+  #volume::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #555;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    transition: background-color 0.3s;
+  }
+  #volume::-moz-range-thumb:hover {
+    background: #333;
+  }
+  
+  .girl {
+    margin: 10px auto 20px;
+    display: block;
+	}
+
+</style>
+</head>
+<body>
+
+<!-- Центр с проигрывателем -->
+<img class="girl" src="oye.gif" alt="sadd///..." width="300" height="150">
+<div id="player-container">
+  <div id="player-box">
+  <img src="bruda.gif" alt="brood" width="200" height="150">
+    <div id="track-name">Загрузка...</div>
+
+    <div id="controls">
+      <button id="prev" class="control-btn" title="Предыдущий"><-</button>
+      <button id="play" class="control-btn" title="Играть/Пауза">></button>
+      <button id="next" class="control-btn" title="Следующий">-></button>
+    </div>
+
+    <div id="progress-container">
+      <div id="current-time">0:00</div>
+      <input type="range" id="progress" min="0" max="100" value="0" step="1" />
+      <div id="duration">0:00</div>
+    </div>
+	
+	<div id="volume-container" style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+		<span style="color:red;">Громкость</span>
+		<input type="range" id="volume" min="0" max="100" value="100" step="1" />
+	</div>
+	
+    <!-- Аудио спрятано -->
+    <audio id="audio" preload="metadata" style="display:none"></audio>
+  </div>
+</div>
+
+<!-- Панель с файлами справа -->
+<div id="file-panel">
+  <h2>Файлы</h2>
+  <div id="file-list">Загрузка файлов...</div>
+</div>
+
+<script>
+const fileListDiv = document.getElementById('file-list');
+const audio = document.getElementById('audio');
+const playBtn = document.getElementById('play');
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const trackNameDiv = document.getElementById('track-name');
+const progress = document.getElementById('progress');
+const currentTimeDiv = document.getElementById('current-time');
+const durationDiv = document.getElementById('duration');
+const volumeSlider = document.getElementById('volume');
+
+let files = [];
+let currentTrackIndex = -1;
+let isPlaying = false;
+let updateTimeInterval = null;
+
+// Показать время в формате "m:ss"
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+// Загрузка списка файлов (пример с PHP — замените на свой URL, возвращающий JSON списка mp3)
+fetch('list_files.php')
+  .then(res => res.json())
+  .then(data => {
+    files = data.map(f => ({ name: f, filename: 'musics/' + f }));
+    if (files.length === 0) {
+      fileListDiv.textContent = 'Нет mp3 файлов.';
+      trackNameDiv.textContent = '';
+      return;
+    }
+    createFileList();
+    loadTrack(0);
+  })
+  .catch(err => {
+    fileListDiv.textContent = 'Ошибка при загрузке списка файлов.';
+    console.error(err);
+    trackNameDiv.textContent = '';
+  });
+
+function createFileList() {
+  fileListDiv.innerHTML = '';
+  files.forEach((file, index) => {
+    const el = document.createElement('div');
+    el.className = 'file-item';
+	
+    //el.textContent = file.name;
+	const lastDotIndex = file.name.lastIndexOf('.');
+	const displayName = lastDotIndex !== -1 ? file.name.slice(0, lastDotIndex) : file.name;
+	el.textContent = displayName;
+	
+    el.dataset.index = index;
+    el.onclick = () => loadTrack(index);
+    fileListDiv.appendChild(el);
+  });
+}
+
+function highlightSelected() {
+  document.querySelectorAll('.file-item').forEach((el, idx) => {
+    el.classList.toggle('active', idx === currentTrackIndex);
+  });
+}
+
+function loadTrack(index) {
+  if (index < 0 || index >= files.length) return;
+  currentTrackIndex = index;
+  const file = files[index];
+  audio.src = file.filename;
+  trackNameDiv.textContent = file.name;
+  
+  //отсечение расширения
+  const lastDotIndex = file.name.lastIndexOf('.');
+  const displayName = lastDotIndex !== -1 ? file.name.slice(0, lastDotIndex) : file.name;
+  trackNameDiv.textContent = displayName;
+  
+  highlightSelected();
+  audio.load();
+  audio.play().catch(() => {});
+}
+
+// Управление воспроизведением
+playBtn.addEventListener('click', () => {
+  if (!audio.src) return;
+  if (isPlaying) {
+    audio.pause();
+  } else {
+    audio.play();
+  }
+});
+audio.addEventListener('play', () => {
+  isPlaying = true;
+  playBtn.textContent = '||';
+  startUpdatingTime();
+});
+audio.addEventListener('pause', () => {
+  isPlaying = false;
+  playBtn.textContent = '>';
+  stopUpdatingTime();
+});
+
+audio.volume = volumeSlider.value / 100;
+volumeSlider.addEventListener('input', () => {
+  audio.volume = volumeSlider.value / 100;
+});
+
+prevBtn.addEventListener('click', () => {
+  if (currentTrackIndex > 0) {
+    loadTrack(currentTrackIndex - 1);
+  }
+});
+nextBtn.addEventListener('click', () => {
+  if (currentTrackIndex + 1 < files.length) {
+    loadTrack(currentTrackIndex + 1);
+  }
+});
+audio.addEventListener('ended', () => {
+  if (currentTrackIndex + 1 < files.length) {
+    loadTrack(currentTrackIndex + 1);
+  } else {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+});
+
+// Обновление прогресса при воспроизведении
+function startUpdatingTime() {
+  stopUpdatingTime();
+  updateTimeInterval = setInterval(() => {
+    if (!audio.duration) return;
+    progress.max = Math.floor(audio.duration);
+    progress.value = Math.floor(audio.currentTime);
+    currentTimeDiv.textContent = formatTime(audio.currentTime);
+    durationDiv.textContent = formatTime(audio.duration);
+  }, 300);
+}
+function stopUpdatingTime() {
+  if (updateTimeInterval) {
+    clearInterval(updateTimeInterval);
+    updateTimeInterval = null;
+  }
+}
+
+// Перемотка при изменении слайдера
+progress.addEventListener('input', () => {
+  audio.currentTime = progress.value;
+  currentTimeDiv.textContent = formatTime(progress.value);
+});
+</script>
+
+</body>
+</html>

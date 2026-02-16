@@ -215,7 +215,6 @@
     margin: 10px auto 20px;
     display: block;
     }
-
 </style>
 </head>
 <body>
@@ -249,10 +248,13 @@
 
 <div id="file-panel">
   <h2>Файлы</h2>
-  <div id="file-list">Загрузка файлов...</div>
+  <div id="file-list"></div>
 </div>
 
 <script>
+const songs = [
+  "Suicidal idol - ecstacy [prod. expl4r] (Slowed).mp3"];
+
 const fileListDiv = document.getElementById('file-list');
 const audio = document.getElementById('audio');
 const playBtn = document.getElementById('play');
@@ -264,7 +266,7 @@ const currentTimeDiv = document.getElementById('current-time');
 const durationDiv = document.getElementById('duration');
 const volumeSlider = document.getElementById('volume');
 
-let files = [];
+let files = songs.map(f => ({ name: f, filename: 'musics/' + f }));
 let currentTrackIndex = -1;
 let isPlaying = false;
 let updateTimeInterval = null;
@@ -274,27 +276,6 @@ function formatTime(seconds) {
   const s = Math.floor(seconds % 60);
   return `${m}:${s < 10 ? '0' : ''}${s}`;
 }
-
-fetch('playlist.json')
-  .then(res => {
-      if (!res.ok) throw new Error("Файл playlist.json не найден");
-      return res.json();
-  })
-  .then(data => {
-    files = data.map(f => ({ name: f, filename: 'musics/' + f }));
-    if (files.length === 0) {
-      fileListDiv.textContent = 'Нет mp3 файлов.';
-      trackNameDiv.textContent = '';
-      return;
-    }
-    createFileList();
-    loadTrack(0, false);
-  })
-  .catch(err => {
-    fileListDiv.textContent = 'Ожидание создания списка...';
-    console.error(err);
-    trackNameDiv.textContent = '...';
-  });
 
 function createFileList() {
   fileListDiv.innerHTML = '';
@@ -316,7 +297,7 @@ function highlightSelected() {
   });
 }
 
-function loadTrack(index, autoPlay = true) {
+function loadTrack(index, shouldPlay = false) {
   if (index < 0 || index >= files.length) return;
   currentTrackIndex = index;
   const file = files[index];
@@ -326,18 +307,8 @@ function loadTrack(index, autoPlay = true) {
   trackNameDiv.textContent = displayName;
   highlightSelected();
   audio.load();
-  if (autoPlay) {
-      audio.play().then(() => {
-          isPlaying = true;
-          playBtn.textContent = '||';
-          startUpdatingTime();
-      }).catch(e => {
-          isPlaying = false;
-          playBtn.textContent = '>';
-      });
-  } else {
-      isPlaying = false;
-      playBtn.textContent = '>';
+  if (shouldPlay) {
+    audio.play().catch(() => {});
   }
 }
 
@@ -368,15 +339,15 @@ volumeSlider.addEventListener('input', () => {
 });
 
 prevBtn.addEventListener('click', () => {
-  let newIndex = currentTrackIndex - 1;
-  if (newIndex < 0) newIndex = files.length - 1;
-  loadTrack(newIndex, true);
+  if (currentTrackIndex > 0) {
+    loadTrack(currentTrackIndex - 1, true);
+  }
 });
 
 nextBtn.addEventListener('click', () => {
-  let newIndex = currentTrackIndex + 1;
-  if (newIndex >= files.length) newIndex = 0;
-  loadTrack(newIndex, true);
+  if (currentTrackIndex + 1 < files.length) {
+    loadTrack(currentTrackIndex + 1, true);
+  }
 });
 
 audio.addEventListener('ended', () => {
@@ -384,8 +355,6 @@ audio.addEventListener('ended', () => {
     loadTrack(currentTrackIndex + 1, true);
   } else {
     audio.pause();
-    isPlaying = false;
-    playBtn.textContent = '>';
     audio.currentTime = 0;
   }
 });
@@ -412,7 +381,11 @@ progress.addEventListener('input', () => {
   audio.currentTime = progress.value;
   currentTimeDiv.textContent = formatTime(progress.value);
 });
-</script>
 
+if (files.length > 0) {
+  createFileList();
+  loadTrack(0, false);
+}
+</script>
 </body>
 </html>

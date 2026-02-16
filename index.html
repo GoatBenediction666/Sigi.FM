@@ -85,23 +85,35 @@
   #controls {
     display: flex;
     justify-content: center;
-    gap: 25px;
+    align-items: center;
+    gap: 20px;
     margin-bottom: 25px;
   }
 
   button.control-btn {
-    font-size: 28px;
-    color: 000;
-    padding: 10px 16px;
+    font-size: 22px;
+    color: #000;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
     border: none;
     background: #f00;
     border-radius: 50%;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s;
     user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   button.control-btn:hover {
     background-color: #333;
+    color: #f00;
+  }
+  
+  button#repeat.repeat-on {
+    background-color: #fff;
+    box-shadow: 0 0 10px #fff;
   }
 
   #progress-container {
@@ -137,22 +149,7 @@
     transition: background-color 0.3s;
     margin-top: -5px; 
   }
-  #progress::-webkit-slider-thumb:hover {
-    background: #333;
-  }
-  #progress::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #555;
-    cursor: pointer;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    transition: background-color 0.3s;
-  }
-  #progress::-moz-range-thumb:hover {
-    background: #333;
-  }
-   
+  
   #current-time,
   #duration {
     width: 45px;
@@ -168,6 +165,7 @@
     align-items: center;
     gap: 12px;
     user-select: none;
+    margin-top: 20px;
   }
 
   #volume {
@@ -178,10 +176,6 @@
     border-radius: 4px;
     background: #ddd;
     cursor: pointer;
-    transition: background 0.3s;
-  }
-  #volume:hover {
-    background: #ccc;
   }
   #volume::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -191,24 +185,7 @@
     border-radius: 50%;
     background: #f00;
     cursor: pointer;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    transition: background-color 0.3s;
     margin-top: -5px; 
-  }
-  #volume::-webkit-slider-thumb:hover {
-    background: #333;
-  }
-  #volume::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #555;
-    cursor: pointer;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    transition: background-color 0.3s;
-  }
-  #volume::-moz-range-thumb:hover {
-    background: #333;
   }
    
   .girl {
@@ -226,6 +203,7 @@
     <div id="track-name">Загрузка...</div>
 
     <div id="controls">
+      <button id="repeat" class="control-btn" title="Повтор">↻</button>
       <button id="prev" class="control-btn" title="Предыдущий"><-</button>
       <button id="play" class="control-btn" title="Играть/Пауза">></button>
       <button id="next" class="control-btn" title="Следующий">-></button>
@@ -237,7 +215,7 @@
       <div id="duration">0:00</div>
     </div>
     
-    <div id="volume-container" style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+    <div id="volume-container">
         <span style="color:red;">Громкость</span>
         <input type="range" id="volume" min="0" max="100" value="100" step="1" />
     </div>
@@ -253,13 +231,15 @@
 
 <script>
 const songs = [
-  "Suicidal idol - ecstacy [prod. expl4r] (Slowed).mp3"];
+  "Suicidal idol - ecstacy [prod. expl4r] (Slowed).mp3"
+];
 
 const fileListDiv = document.getElementById('file-list');
 const audio = document.getElementById('audio');
 const playBtn = document.getElementById('play');
 const prevBtn = document.getElementById('prev');
 const nextBtn = document.getElementById('next');
+const repeatBtn = document.getElementById('repeat');
 const trackNameDiv = document.getElementById('track-name');
 const progress = document.getElementById('progress');
 const currentTimeDiv = document.getElementById('current-time');
@@ -269,6 +249,7 @@ const volumeSlider = document.getElementById('volume');
 let files = songs.map(f => ({ name: f, filename: 'musics/' + f }));
 let currentTrackIndex = -1;
 let isPlaying = false;
+let isRepeating = false;
 let updateTimeInterval = null;
 
 function formatTime(seconds) {
@@ -302,23 +283,25 @@ function loadTrack(index, shouldPlay = false) {
   currentTrackIndex = index;
   const file = files[index];
   audio.src = file.filename;
+  
   const lastDotIndex = file.name.lastIndexOf('.');
   const displayName = lastDotIndex !== -1 ? file.name.slice(0, lastDotIndex) : file.name;
   trackNameDiv.textContent = displayName;
+  
   highlightSelected();
   audio.load();
-  if (shouldPlay) {
-    audio.play().catch(() => {});
-  }
+  if (shouldPlay) audio.play().catch(() => {});
 }
+
+repeatBtn.addEventListener('click', () => {
+  isRepeating = !isRepeating;
+  repeatBtn.classList.toggle('repeat-on', isRepeating);
+});
 
 playBtn.addEventListener('click', () => {
   if (!audio.src) return;
-  if (isPlaying) {
-    audio.pause();
-  } else {
-    audio.play();
-  }
+  if (isPlaying) audio.pause();
+  else audio.play();
 });
 
 audio.addEventListener('play', () => {
@@ -339,23 +322,25 @@ volumeSlider.addEventListener('input', () => {
 });
 
 prevBtn.addEventListener('click', () => {
-  if (currentTrackIndex > 0) {
-    loadTrack(currentTrackIndex - 1, true);
-  }
+  let newIndex = currentTrackIndex - 1;
+  if (newIndex < 0) newIndex = files.length - 1;
+  loadTrack(newIndex, true);
 });
 
 nextBtn.addEventListener('click', () => {
-  if (currentTrackIndex + 1 < files.length) {
-    loadTrack(currentTrackIndex + 1, true);
-  }
+  let newIndex = currentTrackIndex + 1;
+  if (newIndex >= files.length) newIndex = 0;
+  loadTrack(newIndex, true);
 });
 
 audio.addEventListener('ended', () => {
-  if (currentTrackIndex + 1 < files.length) {
-    loadTrack(currentTrackIndex + 1, true);
-  } else {
-    audio.pause();
+  if (isRepeating) {
     audio.currentTime = 0;
+    audio.play();
+  } else {
+    let newIndex = currentTrackIndex + 1;
+    if (newIndex < files.length) loadTrack(newIndex, true);
+    else loadTrack(0, true);
   }
 });
 
@@ -371,15 +356,11 @@ function startUpdatingTime() {
 }
 
 function stopUpdatingTime() {
-  if (updateTimeInterval) {
-    clearInterval(updateTimeInterval);
-    updateTimeInterval = null;
-  }
+  if (updateTimeInterval) clearInterval(updateTimeInterval);
 }
 
 progress.addEventListener('input', () => {
   audio.currentTime = progress.value;
-  currentTimeDiv.textContent = formatTime(progress.value);
 });
 
 if (files.length > 0) {

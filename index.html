@@ -193,6 +193,32 @@
     margin: 10px auto 20px;
     display: block;
     }
+
+  @media (max-width: 768px) 
+  {
+  body {
+    flex-direction: column; 
+    height: auto;           
+    padding: 10px;
+  }
+
+  #file-panel {
+    width: 100%;            
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    max-height: 300px;
+  }
+
+  #player-box {
+    width: 100%; 
+    box-sizing: border-box;
+    padding: 20px; 
+  }
+
+  #volume-container {
+    width: 80%;  
+  }
+}
 </style>
 </head>
 <body>
@@ -374,6 +400,7 @@ if (files.length > 0) {
 </script>
 </body>
 </html>
+
 
 
 

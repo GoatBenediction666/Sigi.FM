@@ -267,8 +267,8 @@
   <div id="file-list"></div>
 </div>
 
-<script>
-
+<script type="module">
+/*
 const songs = [
   "Suicidal idol - ecstacy [prod. expl4r] (Slowed).mp3",
   "czxcvz - kurffew - i dont wna cry (opium remix).mp3",
@@ -283,6 +283,9 @@ const songs = [
   "Kill Eva, ENCASSATOR - Psycho Dreams (Sped Up Version).mp3",
   "aynil - гРуСтНаЯ ПеСнЯ...( зАстаВляЕТ зАдумаТЬся....mp3"
 ];
+*/
+const response = await fetch('musics/list.json');
+const songs = await response.json();
 
 const fileListDiv = document.getElementById('file-list');
 const audio = document.getElementById('audio');
@@ -422,6 +425,7 @@ if (files.length > 0) {
 </script>
 </body>
 </html>
+
 
 
 

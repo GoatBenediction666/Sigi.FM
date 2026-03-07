@@ -17,6 +17,7 @@
   }
 
   #file-panel {
+    scrollbar-color: red #000;
     width: 280px;
     border: 1px solid #f00;
     border-radius: 8px;
@@ -25,6 +26,15 @@
     box-shadow: 0 0 8px rgba(0,0,0,0.1);
     overflow-y: auto;
     user-select: none;
+  }
+
+  #file-panel::-webkit-scrollbar {
+    width: 8px;
+  }
+
+ #file-panel::-webkit-scrollbar-thumb {
+    background-color: red;
+    border-radius: 4px;
   }
 
   #file-panel h2 {
@@ -425,6 +435,7 @@ if (files.length > 0) {
 </script>
 </body>
 </html>
+
 
 
 

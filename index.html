@@ -366,12 +366,28 @@ function createFileList() {
   });
 }
 
+/*
 function highlightSelected() {
   document.querySelectorAll('.file-item').forEach((el, idx) => {
     el.classList.toggle('active', idx === currentTrackIndex);
   });
 }
+*/
 
+function highlightSelected() {
+  document.querySelectorAll('.file-item').forEach((el, idx) => {
+    const isActive = (idx === currentTrackIndex);
+    el.classList.toggle('active', isActive);
+    
+    if (isActive) {
+      el.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  });
+}
+  
 function loadTrack(index, shouldPlay = false) {
   if (index < 0 || index >= files.length) return;
   currentTrackIndex = index;

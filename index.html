@@ -531,6 +531,12 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+document.querySelectorAll('input[type="range"], button').forEach(element => {
+  element.addEventListener('mouseup', () => {
+    element.blur();
+  });
+});
+  
 </script>
 </body>
 </html>

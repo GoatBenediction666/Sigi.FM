@@ -476,6 +476,49 @@ if (files.length > 0) {
   createFileList();
   loadTrack(0, false);
 }
+
+document.addEventListener('keydown', (event) => {
+  
+  if (event.target.tagName === 'INPUT') return;
+
+  switch (event.code) {
+    case 'Space':
+      event.preventDefault();
+      playBtn.click();
+      break;
+
+    case 'ArrowRight':
+      event.preventDefault();
+      nextBtn.click();
+      break;
+
+    case 'ArrowLeft':
+      event.preventDefault();
+      prevBtn.click();
+      break;
+
+    case 'ArrowUp':
+      event.preventDefault();
+      volumeSlider.value = Math.min(100, parseInt(volumeSlider.value) + 10);
+      audio.volume = volumeSlider.value / 100;
+      break;
+
+    case 'ArrowDown':
+      event.preventDefault();
+      volumeSlider.value = Math.max(0, parseInt(volumeSlider.value) - 10);
+      audio.volume = volumeSlider.value / 100;
+      break;
+
+    case 'KeyR':
+      repeatBtn.click();
+      break;
+
+    case 'KeyS':
+      shuffleBtn.click();
+      break;
+  }
+});
+
 </script>
 </body>
 </html>

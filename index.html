@@ -45,7 +45,6 @@
     padding-right: 5px;
     scrollbar-width: thin;
     scrollbar-color: red #000;
-    position: relative;
   }
 
   #file-list::-webkit-scrollbar {
@@ -488,7 +487,6 @@ function highlightSelected() {
 }
 */
 
-/*
 function highlightSelected() {
   document.querySelectorAll('.file-item').forEach((el, idx) => {
     const isActive = (idx === currentTrackIndex);
@@ -499,44 +497,6 @@ function highlightSelected() {
         behavior: 'smooth',
         block: 'center'
       });
-    }
-  });
-}
-*/ 
-/*
-function highlightSelected() {
-  document.querySelectorAll('.file-item').forEach((el, idx) => {
-    const isActive = (idx === currentTrackIndex);
-    el.classList.toggle('active', isActive);
-    
-    if (isActive) {
-      requestAnimationFrame(() => {
-        el.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-      });
-    }
-  });
-}
-*/
-
-function highlightSelected() {
-  const list = document.getElementById('file-list');
-  const items = document.querySelectorAll('.file-item');
-  
-  items.forEach((el, idx) => {
-    const isActive = (idx === currentTrackIndex);
-    el.classList.toggle('active', isActive);
-    
-    if (isActive) {
-      setTimeout(() => {
-        const targetScroll = el.offsetTop - (list.clientHeight / 2) + (el.clientHeight / 2);    
-        list.scrollTo({
-          top: targetScroll,
-          behavior: 'smooth'
-        });
-      }, 50);
     }
   });
 }

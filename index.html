@@ -488,6 +488,7 @@ function highlightSelected() {
 }
 */
 
+/*
 function highlightSelected() {
   document.querySelectorAll('.file-item').forEach((el, idx) => {
     const isActive = (idx === currentTrackIndex);
@@ -501,7 +502,23 @@ function highlightSelected() {
     }
   });
 }
-  
+*/ 
+
+function highlightSelected() {
+  document.querySelectorAll('.file-item').forEach((el, idx) => {
+    const isActive = (idx === currentTrackIndex);
+    el.classList.toggle('active', isActive);
+    
+    if (isActive) {
+      requestAnimationFrame(() => {
+        el.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      });
+    }
+  });
+}
 function loadTrack(index, shouldPlay = false) {
   if (index < 0 || index >= files.length) return;
   currentTrackIndex = index;

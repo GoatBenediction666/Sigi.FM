@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Сигареты.фм</title>
+<title>{title}</title>
 <link rel="icon" href="favicon.png" type="image/png">
 <style>
   body {
@@ -395,14 +395,14 @@
   <!--PLAYER-->
   <div id="player-main-content">
     <img src="bruda.gif" alt="brood" width="200" height="150">
-    <div id="track-name">Загрузка...</div>
+    <div id="track-name">{loading}</div>
 
     <div id="controls">
-      <button id="repeat" class="control-btn" title="Повтор">↻</button>
-      <button id="prev" class="control-btn" title="Предыдущий">←</button>
-      <button id="play" class="control-btn" title="Играть/Пауза">▶</button>
-      <button id="next" class="control-btn" title="Следующий">→</button>
-      <button id="shuffle" class="control-btn" title="Случайная">⤨</button>
+      <button id="repeat" class="control-btn" title="{repeat}">↻</button>
+      <button id="prev" class="control-btn" title="{prev}">←</button>
+      <button id="play" class="control-btn" title="{play}">▶</button>
+      <button id="next" class="control-btn" title="{next}">→</button>
+      <button id="shuffle" class="control-btn" title="{shuffle}">⤨</button>
     </div>
 
     <div id="progress-container">
@@ -411,7 +411,7 @@
         <div id="duration">0:00</div>
     </div>
     <div id="volume-container">
-      <span style="color:red;">Громкость</span>
+      <span style="color:red;">{volume}</span>
       <input type="range" id="volume" min="0" max="100" value="100" step="1" />
     </div>
     
@@ -424,16 +424,16 @@
     </div>
   <!--SETTINGS-->
     <div id="player-settings-content" style="display: none;">
-      <h3>Настройки ебать</h3>
+      <h3>{settings}</h3>
       <div style="margin-bottom: 20px;">
-        <p>Язык / Language:</p>
+        <p>{language}</p>
         <button class="lang-btn" data-lang="ru">RU</button>
         <button class="lang-btn" data-lang="en">EN</button>
       </div>
     </div>
   <!--Equalozer-->
     <div id="player-equalizer-content" style="display: none;">
-      <h3>эква что бля</h3>
+      <h3>{eq}</h3>
       <p>похуй</p>
     </div>
   

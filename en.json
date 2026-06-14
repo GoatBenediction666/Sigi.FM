@@ -1,0 +1,13 @@
+{
+  "title":      "Сigarettes.fm",
+  "info":       "Info",
+  "settings":   "Settings",
+  "eq":         "Equalizer",
+  "loading":    "Loading...",
+  "repeat":     "Repeat",
+  "prev":       "Previous",
+  "play":       "Play/Pause",
+  "next":       "Next",
+  "shuffle":    "Shuffle(Random)",
+  "volume":     "Volume",
+}

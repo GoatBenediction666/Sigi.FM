@@ -637,6 +637,7 @@ btnInfo.addEventListener('click', () => {
     infoContent.style.display = 'none';
     btnInfo.style.textShadow = 'none'; 
   } else {
+    infoContent.style.height = mainContent.offsetHeight + 'px';
     mainContent.style.display = 'none';
     infoContent.style.display = 'block';
     btnInfo.style.textShadow = '0 0 8px #fff'; 

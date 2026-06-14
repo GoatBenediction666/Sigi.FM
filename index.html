@@ -298,7 +298,7 @@
 <img class="girl" src="oye.gif" alt="sadd///..." width="300" height="150">
 <img class="banner" src="sigi.png" alt="sigi" width="600" height="150">
 <div id="player-container">
-  <div id="player-box">
+<div id="player-box">
   <div id="player-header">
     <div style="display: flex; gap: 15px;">
       <button id="btn-info" class="header-btn" title="Информация">ⓘ</button>
@@ -306,7 +306,10 @@
     </div>
     <button id="btn-eq" class="header-btn" title="Эквалайзер">EQ</button>
   </div>
-  <img src="bruda.gif" alt="brood" width="200" height="150">
+    
+  /*PLAYER*/
+  <div id="player-main-content">
+    <img src="bruda.gif" alt="brood" width="200" height="150">
     <div id="track-name">Загрузка...</div>
 
     <div id="controls">
@@ -319,17 +322,25 @@
 
     <div id="progress-container">
       <div id="current-time">0:00</div>
-      <input type="range" id="progress" min="0" max="100" value="0" step="1" />
-      <div id="duration">0:00</div>
+        <input type="range" id="progress" min="0" max="100" value="0" step="1" />
+        <div id="duration">0:00</div>
     </div>
-    
     <div id="volume-container">
-        <span style="color:red;">Громкость</span>
-        <input type="range" id="volume" min="0" max="100" value="100" step="1" />
+      <span style="color:red;">Громкость</span>
+      <input type="range" id="volume" min="0" max="100" value="100" step="1" />
     </div>
     
-    <audio id="audio" preload="metadata" style="display:none"></audio>
   </div>
+  
+  /*INFO*/
+    <div id="player-info-content" style="display: none;">
+      <h3>О проекте Сигареты.фм</h3>
+      <p>Здесь твой заготовленный текст.</p>
+      <p>Можно писать что угодно, делать абзацы, ссылки и т.д.</p>
+    </div>
+  
+    <audio id="audio" preload="metadata" style="display:none"></audio>
+</div>
 </div>
 
 <div id="file-panel">

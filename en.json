@@ -2,6 +2,7 @@
   "title":      "Сigarettes.fm",
   "banner":     "sigien.png",
   "info":       "Info",
+  "infocontent":"Space - Play/Pause \nArrow Down/Up - Next/Previous track \nArrow Left/Right - Quieter/Louder \nМ - Mute \nR - Repeat \nS - Shuffle(Random)",
   "settings":   "Settings",
   "eq":         "Equalizer",
   "loading":    "Loading...",

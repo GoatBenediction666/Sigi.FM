@@ -419,7 +419,7 @@
   
   <!--INFO-->
     <div id="player-info-content" style="display: none;">
-      <h3>Сигареты.фм</h3>
+      <h3>{title}</h3>
       <p>пробел - играть/пауза<br>стрелка вниз/вверх - след/пред трек<br>стрелка влево/вправо - тише/громче<br>М - заглушить<br>R - зациклить<br>S - случайные треки<br></p>
     </div>
   <!--SETTINGS-->
@@ -447,6 +447,51 @@
 </div>
 
 <script type="module">
+
+let dictionary = {};
+
+async function loadLanguage(lang) {
+  try {
+    const response = await fetch(`${lang}.json`);
+    dictionary = await response.json();
+    
+    document.title = dictionary.title;
+
+    const allElements = document.querySelectorAll('*');
+    
+    allElements.forEach(el => {
+      if (el.hasAttribute('title') && el.getAttribute('title').startsWith('{')) {
+        const key = el.getAttribute('title').replace(/[{}]/g, '');
+        if (dictionary[key]) el.setAttribute('title', dictionary[key]);
+      }
+
+      el.childNodes.forEach(node => {
+        if (node.nodeType === 3 && node.textContent.trim().startsWith('{')) {
+          const key = node.textContent.trim().replace(/[{}]/g, '');
+          if (dictionary[key]) node.textContent = dictionary[key];
+        }
+      });
+      
+      if (el.dataset.i18nTarget && dictionary[el.dataset.i18nTarget]) {
+        el.textContent = dictionary[el.dataset.i18nTarget];
+      }
+    });
+
+    localStorage.setItem('lang', lang);
+  } catch (e) {
+    console.error("Ошибка загрузки языка", e);
+  }
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    loadLanguage(e.target.dataset.lang);
+  });
+});
+
+const savedLang = localStorage.getItem('lang') || 'ru';
+loadLanguage(savedLang);
+  
 /*
 const songs = [
   "Suicidal idol - ecstacy [prod. expl4r] (Slowed).mp3",
@@ -762,7 +807,7 @@ tabs.forEach(tab => {
   });
 });
 // ------
-  
+
 document.querySelectorAll('input[type="range"], button').forEach(element => {
   element.addEventListener('mouseup', () => {
     element.blur();

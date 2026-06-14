@@ -661,6 +661,7 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+/*
 // INFO
 const btnInfo = document.getElementById('btn-info');
 const mainContent = document.getElementById('player-main-content');
@@ -679,7 +680,45 @@ btnInfo.addEventListener('click', () => {
   }
 });
 // INFO END
+*/
 
+// ------
+const mainContent = document.getElementById('player-main-content');
+let savedHeight = 0; 
+
+const tabs = [
+  { btn: document.getElementById('btn-info'), content: document.getElementById('player-info-content') },
+  { btn: document.getElementById('btn-settings'), content: document.getElementById('player-settings-content') },
+  { btn: document.getElementById('btn-eq'), content: document.getElementById('player-equalizer-content') }
+];
+
+tabs.forEach(tab => {
+  tab.btn.addEventListener('click', () => {
+    const isCurrentlyOpen = tab.content.style.display === 'block';
+
+    if (mainContent.style.display !== 'none') {
+      savedHeight = mainContent.offsetHeight;
+    }
+
+    tabs.forEach(t => {
+      t.content.style.display = 'none';
+      t.btn.style.textShadow = 'none';
+    });
+
+    if (isCurrentlyOpen) {
+      mainContent.style.display = 'flex';
+    } else {
+      mainContent.style.display = 'none';
+      tab.content.style.display = 'block';
+      if (savedHeight > 0) {
+        tab.content.style.height = savedHeight + 'px';
+      }
+      tab.btn.style.textShadow = '0 0 8px #fff';
+    }
+  });
+});
+// ------
+  
 document.querySelectorAll('input[type="range"], button').forEach(element => {
   element.addEventListener('mouseup', () => {
     element.blur();

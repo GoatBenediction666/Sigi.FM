@@ -381,7 +381,7 @@
 <body>
 
 <img class="girl" src="oye.gif" alt="sadd///..." width="300" height="150">
-<img class="banner" src="{banner}" alt="sigi" width="600" height="150">
+<img class="banner" data-i18n-src="banner" alt="sigi" width="600" height="150">
 <div id="player-container">
 <div id="player-box">
   <div id="player-header">
@@ -455,26 +455,21 @@ async function loadLanguage(lang) {
     const response = await fetch(`${lang}.json`);
     dictionary = await response.json();
     
-    document.title = dictionary.title;
+    if (dictionary.title) document.title = dictionary.title;
 
-    const allElements = document.querySelectorAll('*');
-    
-    allElements.forEach(el => {
-      if (el.hasAttribute('title') && el.getAttribute('title').startsWith('{')) {
-        const key = el.getAttribute('title').replace(/[{}]/g, '');
-        if (dictionary[key]) el.setAttribute('title', dictionary[key]);
-      }
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.dataset.i18n;
+      if (dictionary[key]) el.textContent = dictionary[key];
+    });
 
-      el.childNodes.forEach(node => {
-        if (node.nodeType === 3 && node.textContent.trim().startsWith('{')) {
-          const key = node.textContent.trim().replace(/[{}]/g, '');
-          if (dictionary[key]) node.textContent = dictionary[key];
-        }
-      });
-      
-      if (el.dataset.i18nTarget && dictionary[el.dataset.i18nTarget]) {
-        el.textContent = dictionary[el.dataset.i18nTarget];
-      }
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const key = el.dataset.i18nTitle;
+      if (dictionary[key]) el.setAttribute('title', dictionary[key]);
+    });
+
+    document.querySelectorAll('[data-i18n-src]').forEach(el => {
+      const key = el.dataset.i18nSrc;
+      if (dictionary[key]) el.src = dictionary[key];
     });
 
     localStorage.setItem('lang', lang);

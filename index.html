@@ -411,7 +411,7 @@
         <div id="duration">0:00</div>
     </div>
     <div id="volume-container">
-      <span style="color:red;">{volume}</span>
+      <span style="color:red;" data-i18n="volume"></span>
       <input type="range" id="volume" min="0" max="100" value="100" step="1" />
     </div>
     
@@ -419,21 +419,21 @@
   
   <!--INFO-->
     <div id="player-info-content" style="display: none;">
-      <h3>{title}</h3>
+      <h3>data-i18n="title"</h3>
       <p>пробел - играть/пауза<br>стрелка вниз/вверх - след/пред трек<br>стрелка влево/вправо - тише/громче<br>М - заглушить<br>R - зациклить<br>S - случайные треки<br></p>
     </div>
   <!--SETTINGS-->
     <div id="player-settings-content" style="display: none;">
-      <h3>{settings}</h3>
+      <h3>data-i18n="settings"</h3>
       <div style="margin-bottom: 20px;">
-        <p>{language}</p>
+        <p>data-i18n="language"</p>
         <button class="lang-btn" data-lang="ru">RU</button>
         <button class="lang-btn" data-lang="en">EN</button>
       </div>
     </div>
   <!--Equalozer-->
     <div id="player-equalizer-content" style="display: none;">
-      <h3>{eq}</h3>
+      <h3>data-i18n="eq"</h3>
       <p>похуй</p>
     </div>
   
@@ -593,8 +593,10 @@ function loadTrack(index, shouldPlay = false) {
   
   const lastDotIndex = file.name.lastIndexOf('.');
   const displayName = lastDotIndex !== -1 ? file.name.slice(0, lastDotIndex) : file.name;
+  
   trackNameDiv.textContent = displayName;
   trackNameDiv.setAttribute('title', displayName);
+  trackNameDiv.removeAttribute('data-i18n');
   
   highlightSelected();
   audio.load();

@@ -1,5 +1,6 @@
 {
   "title":      "Сigarettes.fm",
+  "banner":     "sigien.png",
   "info":       "Info",
   "settings":   "Settings",
   "eq":         "Equalizer",
@@ -9,5 +10,6 @@
   "play":       "Play/Pause",
   "next":       "Next",
   "shuffle":    "Shuffle(Random)",
-  "volume":     "Volume"
+  "volume":     "Volume",
+  "language":   "Language"
 }

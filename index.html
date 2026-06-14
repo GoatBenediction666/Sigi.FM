@@ -154,6 +154,10 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    padding: 0 15px;
+    width: 100%;
+    box-sizing: border-box;
     
     text-align: center;
     user-select: none;
@@ -498,6 +502,7 @@ function loadTrack(index, shouldPlay = false) {
   const lastDotIndex = file.name.lastIndexOf('.');
   const displayName = lastDotIndex !== -1 ? file.name.slice(0, lastDotIndex) : file.name;
   trackNameDiv.textContent = displayName;
+  trackNameDiv.setAttribute('title', displayName);
   
   highlightSelected();
   audio.load();

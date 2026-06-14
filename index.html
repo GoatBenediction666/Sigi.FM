@@ -106,6 +106,15 @@
     align-items: center;
     border-bottom: 1px solid #f00;
   }
+
+  .bold-gear {
+    -webkit-text-stroke: 1px #f00;
+  }
+  
+  .bold-gear:hover {
+    -webkit-text-stroke: 1px #fff;
+  }
+  
   .header-btn {
     background: none;
     border: none;
@@ -299,8 +308,8 @@
   <div id="player-box">
   <div id="player-header">
     <div style="display: flex; gap: 15px;">
-      <button id="btn-settings" class="header-btn bold-gear" title="Настройки">⚙</button>
       <button id="btn-info" class="header-btn" title="Информация">ⓘ</button>
+      <button id="btn-settings" class="header-btn bold-gear" title="Настройки">⚙</button>
     </div>
     <button id="btn-eq" class="header-btn" title="Эквалайзер">EQ</button>
   </div>

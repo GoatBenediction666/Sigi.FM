@@ -504,6 +504,7 @@ function highlightSelected() {
 }
 */ 
 
+/*
 function highlightSelected() {
   document.querySelectorAll('.file-item').forEach((el, idx) => {
     const isActive = (idx === currentTrackIndex);
@@ -519,6 +520,31 @@ function highlightSelected() {
     }
   });
 }
+*/
+
+function highlightSelected() {
+  const list = document.getElementById('file-list');
+  const items = document.querySelectorAll('.file-item');
+  
+  items.forEach((el, idx) => {
+    const isActive = (idx === currentTrackIndex);
+    el.classList.toggle('active', isActive);
+    
+    if (isActive) {
+      const itemTop = el.offsetTop;
+      const listHeight = list.clientHeight;
+      const itemHeight = el.offsetHeight;
+      
+      const targetScroll = itemTop - (listHeight / 2) + (itemHeight / 2);
+
+      list.scrollTo({
+        top: targetScroll,
+        behavior: 'smooth'
+      });
+    }
+  });
+}
+  
 function loadTrack(index, shouldPlay = false) {
   if (index < 0 || index >= files.length) return;
   currentTrackIndex = index;

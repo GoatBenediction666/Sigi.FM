@@ -24,10 +24,13 @@
     background: #000;
     padding: 10px;
     box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    overflow-y: auto;
+    /*overflow-y: auto;*/
+    overflow: hidden;
+    display: flex;
     user-select: none;
   }
 
+  /*
   #file-panel::-webkit-scrollbar {
     width: 5px;
     background: #000;
@@ -38,7 +41,8 @@
     border-radius: 4px;
     border: 2px solid #000;
   }
-
+  */
+  
   #file-panel h2 {
     margin-top: 0;
     font-size: 18px;
@@ -49,8 +53,22 @@
   #file-list {
     color: red;
     margin-top: 10px;
-    overflow-x: hidden;
+    flex-grow: 1;
+    overflow-y: auto;
     padding-right: 5px;
+    scrollbar-width: thin;
+    scrollbar-color: red #000;
+  }
+
+  #file-list::-webkit-scrollbar {
+    width: 7px;
+    background: #000;
+  }
+
+  #file-list::-webkit-scrollbar-thumb {
+    background-color: red;
+    border-radius: 4px;
+    border: 2px solid #000; 
   }
 
   .file-item {

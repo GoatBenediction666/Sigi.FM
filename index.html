@@ -45,6 +45,7 @@
     padding-right: 5px;
     scrollbar-width: thin;
     scrollbar-color: red #000;
+    position: relative;
   }
 
   #file-list::-webkit-scrollbar {
@@ -521,6 +522,7 @@ function highlightSelected() {
 */
 
 function highlightSelected() {
+  const list = document.getElementById('file-list');
   const items = document.querySelectorAll('.file-item');
   
   items.forEach((el, idx) => {
@@ -528,11 +530,11 @@ function highlightSelected() {
     el.classList.toggle('active', isActive);
     
     if (isActive) {
-      // Откладываем скролл на 50мс, чтобы браузер успел отрисовать новый активный класс
       setTimeout(() => {
-        el.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
+        const targetScroll = el.offsetTop - (list.clientHeight / 2) + (el.clientHeight / 2);    
+        list.scrollTo({
+          top: targetScroll,
+          behavior: 'smooth'
         });
       }, 50);
     }

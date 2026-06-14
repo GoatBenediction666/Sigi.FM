@@ -84,7 +84,36 @@
     flex-direction: column;
     align-items: center;
   }
+  /*-------------------*/
+  #player-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding-bottom: 15px; 
+    margin-bottom: 20px; 
+    border-bottom: 1px solid #f00; 
+    box-sizing: border-box;
+  }
 
+  .header-btn {
+    background: none;
+    border: none;
+    color: #f00;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    transition: color 0.3s, text-shadow 0.3s;
+    padding: 0 10px;
+    user-select: none;
+  }
+
+  .header-btn:hover {
+    color: #fff;
+    text-shadow: 0 0 8px #fff;
+  }
+  /*-------------------*/
   #track-name {
     font-style: italic;
     font-size: 20px;

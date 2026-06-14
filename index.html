@@ -626,6 +626,24 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+// INFO
+const btnInfo = document.getElementById('btn-info');
+const mainContent = document.getElementById('player-main-content');
+const infoContent = document.getElementById('player-info-content');
+
+btnInfo.addEventListener('click', () => {
+  if (mainContent.style.display === 'none') {
+    mainContent.style.display = 'flex';
+    infoContent.style.display = 'none';
+    btnInfo.style.textShadow = 'none'; 
+  } else {
+    mainContent.style.display = 'none';
+    infoContent.style.display = 'block';
+    btnInfo.style.textShadow = '0 0 8px #fff'; 
+  }
+});
+// INFO END
+
 document.querySelectorAll('input[type="range"], button').forEach(element => {
   element.addEventListener('mouseup', () => {
     element.blur();

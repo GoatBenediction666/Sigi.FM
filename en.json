@@ -5,6 +5,7 @@
   "infocontent":"Space - Play/Pause \nArrow Down/Up - Next/Previous track \nArrow Left/Right - Quieter/Louder \nМ - Mute \nR - Repeat \nS - Shuffle(Random)",
   "settings":   "Settings",
   "hotkeys":    "HotKeys:",
+  "playlist":   "Playlist",
   "eq":         "Equalizer",
   "loading":    "Loading...",
   "repeat":     "Repeat",

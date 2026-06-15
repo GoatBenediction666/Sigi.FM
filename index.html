@@ -574,7 +574,7 @@ function highlightSelected() {
   });
 }
 */
-
+/* SMOOTH TRACK LIST */
 function highlightSelected() {
   document.querySelectorAll('.file-item').forEach((el, idx) => {
     const isActive = (idx === currentTrackIndex);
@@ -588,6 +588,38 @@ function highlightSelected() {
     }
   });
 }
+
+/* SMOOTH VOLUME CONTROL */
+let targetVolume = parseFloat(volumeSlider.value);
+let volumeAnimationId = null;
+
+function animateVolumeTo(newTarget) {
+  targetVolume = Math.max(0, Math.min(100, newTarget)); 
+  
+  if (volumeAnimationId) cancelAnimationFrame(volumeAnimationId);
+
+  const startVolume = parseFloat(volumeSlider.value);
+  const diff = targetVolume - startVolume;
+  const duration = 200; 
+  let start = null;
+
+  function step(timestamp) {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    const easeProgress = 1 - Math.pow(1 - progress, 2);
+    const currentVolume = startVolume + (diff * easeProgress);
+
+    volumeSlider.value = currentVolume;
+    audio.volume = currentVolume / 100;
+
+    if (progress < 1) {
+      volumeAnimationId = requestAnimationFrame(step);
+    }
+  }
+
+  volumeAnimationId = requestAnimationFrame(step);
+}
+/* SMOOTH END */
   
 function loadTrack(index, shouldPlay = false) {
   if (index < 0 || index >= files.length) return;
@@ -649,11 +681,18 @@ audio.addEventListener('pause', () => {
   stopUpdatingTime();
 });
 
+/*
 audio.volume = volumeSlider.value / 100;
 volumeSlider.addEventListener('input', () => {
   audio.volume = volumeSlider.value / 100;
 });
+*/
 
+volumeSlider.addEventListener('input', () => {
+  audio.volume = volumeSlider.value / 100;
+  targetVolume = parseFloat(volumeSlider.value); 
+});
+  
 prevBtn.addEventListener('click', () => {
   let newIndex = currentTrackIndex - 1;
   if (newIndex < 0) newIndex = files.length - 1;
@@ -716,7 +755,7 @@ document.addEventListener('keydown', (event) => {
       event.preventDefault();
       prevBtn.click();
       break;
-
+    /*
     case 'ArrowRight':
       event.preventDefault();
       volumeSlider.value = Math.min(100, parseInt(volumeSlider.value) + 10);
@@ -738,6 +777,27 @@ document.addEventListener('keydown', (event) => {
         volumeSlider.dataset.prevVolume = volumeSlider.value;
         volumeSlider.value = 0;
         audio.volume = 0;
+      }
+      break;
+    */
+
+    case 'ArrowRight':
+      event.preventDefault();
+      animateVolumeTo(targetVolume + 10);
+      break;
+
+    case 'ArrowLeft':
+      event.preventDefault();
+      animateVolumeTo(targetVolume - 10);
+      break;
+
+    case 'KeyM':
+      if (targetVolume == 0) {
+        let restoredVolume = volumeSlider.dataset.prevVolume || 100;
+        animateVolumeTo(restoredVolume);
+      } else {
+        volumeSlider.dataset.prevVolume = targetVolume;
+        animateVolumeTo(0);
       }
       break;
       

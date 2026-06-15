@@ -390,8 +390,8 @@
       <button id="btn-settings" class="header-btn bold-gear" data-i18n-title="settings">⚙</button>
     </div>
     <div style="display: flex; gap: 15px;">
-    <button id="btn-playlist" class="header-btn">☰▶</button>
-    <button id="btn-eq" class="header-btn" data-i18n-title="eq">EQ</button>
+      <button id="btn-playlist" class="header-btn" data-i18n-title="playlist">☰▶</button>
+      <button id="btn-eq" class="header-btn" data-i18n-title="eq">EQ</button>
     </div>
   </div>
     
@@ -434,6 +434,12 @@
         <button class="lang-btn" data-lang="en">EN</button>
       </div>
     </div>
+  <!--Playlist-->
+    <div id="player-playlist-content" style="display: none;">
+      <h3 data-i18n="playlist"></h3>
+      <p>похуй</p>
+    </div>
+  
   <!--Equalozer-->
     <div id="player-equalizer-content" style="display: none;">
       <h3 data-i18n="eq"></h3>
@@ -860,6 +866,7 @@ let savedHeight = 0;
 const tabs = [
   { btn: document.getElementById('btn-info'), content: document.getElementById('player-info-content') },
   { btn: document.getElementById('btn-settings'), content: document.getElementById('player-settings-content') },
+  { btn: document.getElementById('btn-playlist'), content: document.getElementById('player-playlist-content') },
   { btn: document.getElementById('btn-eq'), content: document.getElementById('player-equalizer-content') }
 ];
 

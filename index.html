@@ -601,7 +601,7 @@ function animateVolumeTo(newTarget) {
   }
   
   targetVolume = clampedTarget;
-  
+
   if (volumeAnimationId) cancelAnimationFrame(volumeAnimationId);
 
   const startVolume = parseFloat(volumeSlider.value);
@@ -609,14 +609,15 @@ function animateVolumeTo(newTarget) {
   
   if (diff === 0) return;
 
-  const duration = Math.abs(diff) * 15; 
+  const duration = 200; 
   let start = null;
 
   function step(timestamp) {
     if (!start) start = timestamp;
     const progress = Math.min((timestamp - start) / duration, 1);
 
-    const currentVolume = startVolume + (diff * progress);
+    const easeProgress = 1 - Math.pow(1 - progress, 2);
+    const currentVolume = startVolume + (diff * easeProgress);
 
     volumeSlider.value = currentVolume;
     audio.volume = currentVolume / 100;

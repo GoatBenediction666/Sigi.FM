@@ -594,26 +594,37 @@ let targetVolume = parseFloat(volumeSlider.value);
 let volumeAnimationId = null;
 
 function animateVolumeTo(newTarget) {
-  targetVolume = Math.max(0, Math.min(100, newTarget)); 
+  const clampedTarget = Math.max(0, Math.min(100, newTarget)); 
+  
+  if (clampedTarget === targetVolume && volumeAnimationId) {
+    return;
+  }
+  
+  targetVolume = clampedTarget;
   
   if (volumeAnimationId) cancelAnimationFrame(volumeAnimationId);
 
   const startVolume = parseFloat(volumeSlider.value);
   const diff = targetVolume - startVolume;
-  const duration = 200; 
+  
+  if (diff === 0) return;
+
+  const duration = Math.abs(diff) * 15; 
   let start = null;
 
   function step(timestamp) {
     if (!start) start = timestamp;
     const progress = Math.min((timestamp - start) / duration, 1);
-    const easeProgress = 1 - Math.pow(1 - progress, 2);
-    const currentVolume = startVolume + (diff * easeProgress);
+
+    const currentVolume = startVolume + (diff * progress);
 
     volumeSlider.value = currentVolume;
     audio.volume = currentVolume / 100;
 
     if (progress < 1) {
       volumeAnimationId = requestAnimationFrame(step);
+    } else {
+      volumeAnimationId = null;
     }
   }
 
@@ -783,12 +794,14 @@ document.addEventListener('keydown', (event) => {
 
     case 'ArrowRight':
       event.preventDefault();
-      animateVolumeTo(targetVolume + 10);
+      let stepUp = Math.ceil((targetVolume + 1) / 10) * 10;
+      animateVolumeTo(Math.min(100, stepUp));
       break;
 
     case 'ArrowLeft':
       event.preventDefault();
-      animateVolumeTo(targetVolume - 10);
+      let stepDown = Math.floor((targetVolume - 1) / 10) * 10;
+      animateVolumeTo(Math.max(0, stepDown));
       break;
 
     case 'KeyM':

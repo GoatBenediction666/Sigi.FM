@@ -226,7 +226,12 @@
     border-radius: 50%; background: #f00; box-shadow: 0 0 6px #f00;
   }
   .eq-band input[type="range"]::-webkit-slider-thumb:hover { background: #fff; }
-
+  
+  #visualizer {
+  width: 100%;
+  height: 100%;
+  display: block;
+  }
   /* eq eq eq */
 
   .lang-btn {
@@ -1035,7 +1040,7 @@ function routeAudio() {
     source.connect(analyser);
   }
   analyser.connect(audioCtx.destination);
-  console.log("Цепь собрана. Подключено к destination:", analyser.context.destination);
+  //console.log("Цепь собрана - ", analyser.context.destination);
 }
 
 function initAudio() {

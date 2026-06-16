@@ -1125,6 +1125,7 @@ function draw() {
     const value = (val / 255) * (i < 5 ? 0.8 + (i * 0.04) : 1);
     ctx.lineTo(percent * w, h - (value * h * 0.5) - 5);
   }
+  ctx.lineTo(w, h);
   ctx.fillStyle = gradientFill; ctx.fill();
   ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(255, 0, 0, 0.6)';
   ctx.strokeStyle = gradientLine; ctx.lineWidth = 2; ctx.stroke(); ctx.shadowBlur = 0;

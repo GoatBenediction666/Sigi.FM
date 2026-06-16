@@ -173,6 +173,62 @@
     overflow-y: auto;
   }
 
+  /* eq eq eq */
+
+  #player-equalizer-content {
+    color: #f00;
+    text-align: center;
+    width: 100%;
+    min-height: 250px; 
+    overflow-y: auto;
+  }
+  
+  .eq-top-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; margin-bottom: 10px;
+  }
+  .preset-select {
+    background: #111; color: #f00; border: 1px solid #f00;
+    padding: 4px 10px; border-radius: 4px; outline: none;
+    cursor: pointer; font-weight: bold; font-size: 12px;
+  }
+  .toggle-btn {
+    background: #f00; color: #000; border: none;
+    padding: 4px 12px; border-radius: 4px; font-weight: bold;
+    font-size: 12px; cursor: pointer; box-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
+    transition: all 0.2s;
+  }
+  .toggle-btn.off {
+    background: #222; color: #555; box-shadow: none; border: 1px solid #333;
+  }
+  .visualizer-container {
+    width: 100%; height: 100px; /* Сжато для плеера */
+    margin-bottom: 10px; border-radius: 6px; overflow: hidden;
+    background: #050505; border: 1px solid #300;
+  }
+  .eq-container {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255, 0, 0, 0.02); padding: 10px 5px;
+    border-radius: 8px; gap: 1px; border: 1px solid #200; transition: opacity 0.3s;
+  }
+  .eq-container.bypass { opacity: 0.25; pointer-events: none; }
+  .eq-band { display: flex; flex-direction: column; align-items: center; flex: 1; }
+  .eq-band span { font-size: 9px; color: #888; margin-top: 5px; }
+  .slider-wrapper { position: relative; width: 100%; height: 100px; display: flex; justify-content: center; align-items: center; }
+  
+  .eq-band input[type="range"] {
+    -webkit-appearance: none; width: 90px; height: 3px;
+    position: absolute; transform: rotate(-90deg);
+    background: #222; border-radius: 2px; outline: none; cursor: pointer; margin: 0;
+  }
+  .eq-band input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 10px; height: 10px;
+    border-radius: 50%; background: #f00; box-shadow: 0 0 6px #f00;
+  }
+  .eq-band input[type="range"]::-webkit-slider-thumb:hover { background: #fff; }
+
+  /* eq eq eq */
+
   .lang-btn {
     background: #000;
     border: 1px solid #f00;
@@ -195,14 +251,6 @@
     background: #f00;
     color: #fff;
     box-shadow: 0 0 8px #f00;
-  }
-
-  #player-equalizer-content {
-    color: #f00;
-    text-align: center;
-    width: 100%;
-    min-height: 250px; 
-    overflow-y: auto;
   }
   
   #track-name {
@@ -450,8 +498,22 @@
   
   <!--Equalozer-->
     <div id="player-equalizer-content" style="display: none;">
-      <h3 data-i18n="eq"></h3>
-      <p>похуй</p>
+    <div class="eq-top-bar">
+      <select id="preset-select" class="preset-select">
+        <option value="flat">Пресет: Flat</option>
+        <option value="bass">Пресет: Bass Boost</option>
+        <option value="rock">Пресет: Rock</option>
+        <option value="electro">Electronic</option>
+        <option value="vocal">Пресет: Vocal</option>
+      </select>
+      <button id="eq-toggle" class="toggle-btn">EQ: ON</button>
+    </div>
+
+    <div class="visualizer-container">
+      <canvas id="visualizer"></canvas>
+    </div>
+
+    <div class="eq-container" id="eq-sliders-container"></div>
     </div>
   
     <audio id="audio" preload="metadata" style="display:none"></audio>
@@ -699,6 +761,8 @@ audio.addEventListener('play', () => {
   isPlaying = true;
   playBtn.textContent = '❙❙';
   startUpdatingTime();
+  initAudio(); 
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 });
 
 audio.addEventListener('pause', () => {
@@ -905,6 +969,161 @@ tabs.forEach(tab => {
 });
 // ------
 
+
+/* eq eq eq */
+
+// === ЛОГИКА ЭКВАЛАЙЗЕРА ===
+const canvas = document.getElementById('visualizer');
+const ctx = canvas.getContext('2d');
+const slidersContainer = document.getElementById('eq-sliders-container');
+const eqToggleBtn = document.getElementById('eq-toggle');
+const presetSelect = document.getElementById('preset-select');
+
+const eqFrequencies = [30, 60, 180, 320, 600, 1000, 3000, 6000, 8000, 16000];
+const eqLabels = ['30 Гц', '60 Гц', '180 Гц', '320 Гц', '600 Гц', '1 кГц', '3 кГц', '6 кГц', '8 кГц', '16 кГц'];
+const presets = {
+  flat:    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  bass:    [7, 6, 5, 2, 0, 0, 0, 0, 0, 0],
+  rock:    [4, 3, 2, -1, -2, -1, 1, 2, 3, 4],
+  electro: [5, 4, 1, 0, -1, 0, 2, 4, 5, 5],
+  vocal:   [-3, -2, 0, 2, 4, 4, 3, 1, -1, -2]
+};
+
+let audioCtx = null;
+let analyser = null;
+let source = null;
+let filters = [];
+let eqEnabled = true;
+
+function generateSliders() {
+  slidersContainer.innerHTML = '';
+  eqFrequencies.forEach((freq, i) => {
+    const band = document.createElement('div'); band.className = 'eq-band';
+    const wrapper = document.createElement('div'); wrapper.className = 'slider-wrapper';
+    const slider = document.createElement('input');
+    slider.type = 'range'; slider.id = `eq-band-${i}`; slider.min = '-12'; slider.max = '12'; slider.step = '1'; slider.value = '0';
+    const label = document.createElement('span'); label.innerText = eqLabels[i];
+    wrapper.appendChild(slider); band.appendChild(wrapper); band.appendChild(label); slidersContainer.appendChild(band);
+
+    slider.addEventListener('input', (e) => {
+      presetSelect.value = 'flat';
+      if (filters[i] && audioCtx) filters[i].gain.setValueAtTime(e.target.value, audioCtx.currentTime);
+    });
+  });
+}
+generateSliders();
+
+function resizeCanvas() {
+  if (canvas.clientWidth === 0) return; 
+  canvas.width = canvas.clientWidth * window.devicePixelRatio;
+  canvas.height = canvas.clientHeight * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+}
+window.addEventListener('resize', resizeCanvas);
+
+function routeAudio() {
+  if (!source || !analyser) return;
+  source.disconnect(); filters.forEach(f => f.disconnect()); analyser.disconnect();
+  if (eqEnabled) {
+    let currentSource = source;
+    filters.forEach(filter => { currentSource.connect(filter); currentSource = filter; });
+    currentSource.connect(analyser);
+  } else {
+    source.connect(analyser);
+  }
+  analyser.connect(audioCtx.destination);
+}
+
+function initAudio() {
+  if (audioCtx) return; 
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  
+  // ВАЖНО: Берем звук из твоего тега <audio id="audio">
+  const audioEl = document.getElementById('audio'); 
+  source = audioCtx.createMediaElementSource(audioEl);
+
+  filters = eqFrequencies.map((freq, index) => {
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = index === 0 ? 'lowshelf' : (index === eqFrequencies.length - 1 ? 'highshelf' : 'peaking');
+    filter.frequency.value = freq; filter.Q.value = 1.2;
+    filter.gain.value = document.getElementById(`eq-band-${index}`).value;
+    return filter;
+  });
+
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 1024; analyser.smoothingTimeConstant = 0.75;
+  
+  routeAudio();
+  draw();
+}
+
+eqToggleBtn.addEventListener('click', () => {
+  eqEnabled = !eqEnabled;
+  eqToggleBtn.innerText = eqEnabled ? 'EQ: ON' : 'EQ: OFF';
+  eqToggleBtn.classList.toggle('off', !eqEnabled);
+  slidersContainer.classList.toggle('bypass', !eqEnabled);
+  routeAudio();
+});
+
+presetSelect.addEventListener('change', (e) => {
+  const selectedPreset = presets[e.target.value];
+  if (!selectedPreset) return;
+  selectedPreset.forEach((gainValue, i) => {
+    const slider = document.getElementById(`eq-band-${i}`);
+    if (slider) slider.value = gainValue;
+    if (filters[i] && audioCtx) filters[i].gain.setValueAtTime(gainValue, audioCtx.currentTime);
+  });
+});
+
+function draw() {
+  requestAnimationFrame(draw);
+  const w = canvas.width / window.devicePixelRatio, h = canvas.height / window.devicePixelRatio;
+  ctx.clearRect(0, 0, w, h);
+  
+  if (!analyser) return;
+  const dataArray = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(dataArray);
+
+  ctx.beginPath(); ctx.strokeStyle = 'rgba(255, 0, 0, 0.15)'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]); 
+  for (let i = 0; i < eqFrequencies.length; i++) {
+    const val = parseFloat(document.getElementById(`eq-band-${i}`).value); 
+    const eqY = (h / 2) - (val / 12) * (h / 3.5);
+    const eqX = (i / (eqFrequencies.length - 1)) * (w - 40) + 20;
+    if (i === 0) ctx.moveTo(eqX, eqY);
+    else {
+      const prevX = ((i - 1) / (eqFrequencies.length - 1)) * (w - 40) + 20;
+      const prevVal = parseFloat(document.getElementById(`eq-band-${i-1}`).value);
+      const prevEqY = (h / 2) - (prevVal / 12) * (h / 3.5);
+      ctx.bezierCurveTo((prevX + eqX) / 2, prevEqY, (prevX + eqX) / 2, eqY, eqX, eqY);
+    }
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+
+  ctx.beginPath();
+  let gradientFill = ctx.createLinearGradient(0, 0, 0, h);
+  gradientFill.addColorStop(0, 'rgba(255, 0, 0, 0.3)'); gradientFill.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  let gradientLine = ctx.createLinearGradient(0, 0, w, 0);
+  gradientLine.addColorStop(0, '#ff0000'); gradientLine.addColorStop(1, '#990000');
+
+  ctx.moveTo(0, h);
+  for (let i = 0; i <= 90; i++) {
+    const percent = i / 90;
+    const exactIndex = Math.exp(Math.log(3) + percent * (Math.log(analyser.frequencyBinCount * 0.75) - Math.log(3)));
+    const valLower = dataArray[Math.floor(exactIndex)] || 0;
+    const valUpper = dataArray[Math.ceil(exactIndex)] || 0;
+    const val = valLower * (1 - (exactIndex - Math.floor(exactIndex))) + valUpper * (exactIndex - Math.floor(exactIndex));
+    
+    const value = (val / 255) * (i < 5 ? 0.8 + (i * 0.04) : 1);
+    ctx.lineTo(percent * w, h - (value * h * 0.75) - 5);
+  }
+  ctx.fillStyle = gradientFill; ctx.fill();
+  ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(255, 0, 0, 0.6)';
+  ctx.strokeStyle = gradientLine; ctx.lineWidth = 2; ctx.stroke(); ctx.shadowBlur = 0;
+}
+  
+/* eq eq eq */
+
+  
 document.querySelectorAll('input[type="range"], button').forEach(element => {
   element.addEventListener('mouseup', () => {
     element.blur();

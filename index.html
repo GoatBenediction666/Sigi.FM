@@ -1035,6 +1035,7 @@ function routeAudio() {
     source.connect(analyser);
   }
   analyser.connect(audioCtx.destination);
+  console.log("Цепь собрана. Подключено к destination:", analyser.context.destination);
 }
 
 function initAudio() {

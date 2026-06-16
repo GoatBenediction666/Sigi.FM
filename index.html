@@ -194,13 +194,22 @@
     cursor: pointer; font-weight: bold; font-size: 12px;
   }
   .toggle-btn {
-    background: #f00; color: #000; border: none;
-    padding: 4px 12px; border-radius: 4px; font-weight: bold;
-    font-size: 12px; cursor: pointer; box-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
+    background: #f00;
+    color: #000;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
     transition: all 0.2s;
   }
   .toggle-btn.off {
-    background: #222; color: #555; box-shadow: none; border: 1px solid #333;
+    background: #222;
+    color: #555; 
+    box-shadow: none;
+    border: 1px solid #333;
   }
   .visualizer-container {
     width: 100%; height: 100px; /* Сжато для плеера */
@@ -1068,7 +1077,7 @@ function initAudio() {
 
 eqToggleBtn.addEventListener('click', () => {
   eqEnabled = !eqEnabled;
-  eqToggleBtn.innerText = eqEnabled ? 'EQ: ON' : 'EQ: OFF';
+  //eqToggleBtn.innerText = eqEnabled ? 'EQ: ON' : 'EQ: OFF';
   eqToggleBtn.classList.toggle('off', !eqEnabled);
   slidersContainer.classList.toggle('bypass', !eqEnabled);
   routeAudio();

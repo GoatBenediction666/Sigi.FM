@@ -1123,7 +1123,7 @@ function draw() {
     const val = valLower * (1 - (exactIndex - Math.floor(exactIndex))) + valUpper * (exactIndex - Math.floor(exactIndex));
     
     const value = (val / 255) * (i < 5 ? 0.8 + (i * 0.04) : 1);
-    ctx.lineTo(percent * w, h - (value * h * 0.75) - 5);
+    ctx.lineTo(percent * w, h - (value * h * 0.5) - 5);
   }
   ctx.fillStyle = gradientFill; ctx.fill();
   ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(255, 0, 0, 0.6)';

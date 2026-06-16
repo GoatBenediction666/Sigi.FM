@@ -1114,6 +1114,7 @@ function draw() {
   let gradientLine = ctx.createLinearGradient(0, 0, w, 0);
   gradientLine.addColorStop(0, '#ff0000'); gradientLine.addColorStop(1, '#990000');
 
+  /*
   ctx.moveTo(0, h);
   for (let i = 0; i <= 90; i++) {
     const percent = i / 90;
@@ -1126,6 +1127,22 @@ function draw() {
     ctx.lineTo(percent * w, h - (value * h * 0.5) - 5);
   }
   ctx.lineTo(w, h);
+  */
+  ctx.moveTo(0, h);
+  for (let i = 0; i <= 90; i++) {
+    const percent = i / 90;
+    const exactIndex = Math.exp(Math.log(3) + percent * (Math.log(analyser.frequencyBinCount * 0.75) - Math.log(3)));
+    const valLower = dataArray[Math.floor(exactIndex)] || 0;
+    const valUpper = dataArray[Math.ceil(exactIndex)] || 0;
+    const val = valLower * (1 - (exactIndex - Math.floor(exactIndex))) + valUpper * (exactIndex - Math.floor(exactIndex));
+    
+    let fade = 1;
+    if (i < 5) fade = 0.8 + (i * 0.04);
+    if (i > 80) fade = (90 - i) / 10;
+
+    const value = (val / 255) * fade;
+    ctx.lineTo(percent * w, h - (value * h * 0.5) - (5 * fade));
+  }
   ctx.fillStyle = gradientFill; ctx.fill();
   ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(255, 0, 0, 0.6)';
   ctx.strokeStyle = gradientLine; ctx.lineWidth = 2; ctx.stroke(); ctx.shadowBlur = 0;

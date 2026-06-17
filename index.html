@@ -615,7 +615,7 @@ let files = [];
 
 try {
   const response = await fetch(`https://archive.org/metadata/${archiveId}`);
-  if (!response.ok) throw new Error(`Ошибка сервера: ${response.status}`);
+  if (!response.ok) throw new Error(`server error: ${response.status}`);
   
   const metadata = await response.json();
   songs = metadata.files
@@ -627,8 +627,8 @@ try {
     filename: `https://archive.org/download/${archiveId}/${encodeURIComponent(f)}` 
   }));
 } catch (e) {
-  console.error("Не удалось загрузить треки из архива:", e);
-  trackNameDiv.textContent = "Ошибка загрузки плейлиста";
+  console.error("unable to load tracks from archive:", e);
+  trackNameDiv.textContent = "Playlist load error";
 }
   
 const fileListDiv = document.getElementById('file-list');

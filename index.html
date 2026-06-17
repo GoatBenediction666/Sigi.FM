@@ -594,29 +594,8 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 
 const savedLang = localStorage.getItem('lang') || 'ru';
 loadLanguage(savedLang);
-  
+   
 /*
-const songs = [
-  "Suicidal idol - ecstacy [prod. expl4r] (Slowed).mp3",
-  "czxcvz - kurffew - i dont wna cry (opium remix).mp3",
-  "rukzi - 我們都有感情 (slowed).mp3",
-  "xsonsss & pathetic - the dancing nihilist triad slowed.mp3",
-  "Максим - Отпускаю (Torn Remix) Mastering E-RO.mp3",
-  "DJ UNIVXRSEL - TURN THE FUCK UP.mp3",
-  "maxwowcludzxc - NEBESNYA SLEZA x3.mp3",
-  "Юпи - Сиять. [empty funk remix].mp3",
-  "Пошлая Молли - Школа не нужна (nightcore).mp3",
-  "dmqa - Прощание (speed up_nightcore).mp3",
-  "Kill Eva, ENCASSATOR - Psycho Dreams (Sped Up Version).mp3",
-  "aynil - гРуСтНаЯ ПеСнЯ...( зАстаВляЕТ зАдумаТЬся....mp3"
-];
-*/
-
-/*
-const response = await fetch('musics/list.json');
-const songs = await response.json();
-*/
-
 const archiveId = 'technos1g1'; 
 const response = await fetch(`https://archive.org/metadata/${archiveId}`);
 const metadata = await response.json();
@@ -628,7 +607,30 @@ let files = songs.map(f => ({
   name: f, 
   filename: `https://archive.org/download/${archiveId}/${encodeURIComponent(f)}` 
 }));
+*/
 
+const archiveId = 'technos1g1';
+let songs = [];
+let files = [];
+
+try {
+  const response = await fetch(`https://archive.org/metadata/${archiveId}`);
+  if (!response.ok) throw new Error(`Ошибка сервера: ${response.status}`);
+  
+  const metadata = await response.json();
+  songs = metadata.files
+    .filter(file => file.name.endsWith('.mp3'))
+    .map(file => file.name);
+    
+  files = songs.map(f => ({ 
+    name: f, 
+    filename: `https://archive.org/download/${archiveId}/${encodeURIComponent(f)}` 
+  }));
+} catch (e) {
+  console.error("Не удалось загрузить треки из архива:", e);
+  trackNameDiv.textContent = "Ошибка загрузки плейлиста";
+}
+  
 const fileListDiv = document.getElementById('file-list');
 const audio = document.getElementById('audio');
 const playBtn = document.getElementById('play');

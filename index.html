@@ -651,7 +651,6 @@ let currentTrackIndex = -1;
 let isPlaying = false;
 let isRepeating = false;
 let isShuffle = false;
-let updateTimeInterval = null;
 
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60);
@@ -771,6 +770,17 @@ function getNextTrackIndex() {
     return newIndex;
   }
 }
+
+function updateProgress() {
+  if (!audio.duration) return;
+  progress.max = Math.floor(audio.duration);
+  progress.value = Math.floor(audio.currentTime);
+  currentTimeDiv.textContent = formatTime(audio.currentTime);
+  durationDiv.textContent = formatTime(audio.duration);
+
+  const percent = (audio.currentTime / audio.duration) * 100;
+  progress.style.setProperty('--val', percent + '%');
+}
   
 repeatBtn.addEventListener('click', () => {
   isRepeating = !isRepeating;
@@ -788,10 +798,11 @@ playBtn.addEventListener('click', () => {
   else audio.play();
 });
 
+audio.addEventListener('timeupdate', updateProgress);
+  
 audio.addEventListener('play', () => {
   isPlaying = true;
   playBtn.textContent = '❙❙';
-  startUpdatingTime();
   initAudio(); 
   if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 });
@@ -799,7 +810,6 @@ audio.addEventListener('play', () => {
 audio.addEventListener('pause', () => {
   isPlaying = false;
   playBtn.textContent = '▶';
-  stopUpdatingTime();
 });
 
 /*
@@ -833,24 +843,6 @@ audio.addEventListener('ended', () => {
     loadTrack(getNextTrackIndex(), true);
   }
 });
-
-function startUpdatingTime() {
-  stopUpdatingTime();
-  updateTimeInterval = setInterval(() => {
-    if (!audio.duration) return;
-    progress.max = Math.floor(audio.duration);
-    progress.value = Math.floor(audio.currentTime);
-    currentTimeDiv.textContent = formatTime(audio.currentTime);
-    durationDiv.textContent = formatTime(audio.duration);
-
-    const percent = (audio.currentTime / audio.duration) * 100;
-    progress.style.setProperty('--val', percent + '%');
-  }, 300);
-}
-
-function stopUpdatingTime() {
-  if (updateTimeInterval) clearInterval(updateTimeInterval);
-}
 
 progress.addEventListener('input', () => {
   audio.currentTime = progress.value;

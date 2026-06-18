@@ -930,13 +930,6 @@ audio.addEventListener('pause', () => {
   playBtn.textContent = '▶';
 });
 
-/*
-audio.volume = volumeSlider.value / 100;
-volumeSlider.addEventListener('input', () => {
-  audio.volume = volumeSlider.value / 100;
-});
-*/
-
 volumeSlider.addEventListener('input', () => {
   audio.volume = volumeSlider.value / 100;
   targetVolume = parseFloat(volumeSlider.value);
@@ -993,31 +986,6 @@ document.addEventListener('keydown', (event) => {
       event.preventDefault();
       prevBtn.click();
       break;
-    /*
-    case 'ArrowRight':
-      event.preventDefault();
-      volumeSlider.value = Math.min(100, parseInt(volumeSlider.value) + 10);
-      audio.volume = volumeSlider.value / 100;
-      break;
-
-    case 'ArrowLeft':
-      event.preventDefault();
-      volumeSlider.value = Math.max(0, parseInt(volumeSlider.value) - 10);
-      audio.volume = volumeSlider.value / 100;
-      break;
-
-    case 'KeyM':
-      if (volumeSlider.value == 0) {
-        let restoredVolume = volumeSlider.dataset.prevVolume || 100;
-        volumeSlider.value = restoredVolume;
-        audio.volume = restoredVolume / 100;
-      } else {
-        volumeSlider.dataset.prevVolume = volumeSlider.value;
-        volumeSlider.value = 0;
-        audio.volume = 0;
-      }
-      break;
-    */
 
     case 'ArrowRight':
       event.preventDefault();
@@ -1050,27 +1018,6 @@ document.addEventListener('keydown', (event) => {
       break;
   }
 });
-
-/*
-// INFO
-const btnInfo = document.getElementById('btn-info');
-const mainContent = document.getElementById('player-main-content');
-const infoContent = document.getElementById('player-info-content');
-
-btnInfo.addEventListener('click', () => {
-  if (mainContent.style.display === 'none') {
-    mainContent.style.display = 'flex';
-    infoContent.style.display = 'none';
-    btnInfo.style.textShadow = 'none'; 
-  } else {
-    infoContent.style.height = mainContent.offsetHeight + 'px';
-    mainContent.style.display = 'none';
-    infoContent.style.display = 'block';
-    btnInfo.style.textShadow = '0 0 8px #fff'; 
-  }
-});
-// INFO END
-*/
 
 // ------
 const mainContent = document.getElementById('player-main-content');
@@ -1113,7 +1060,6 @@ tabs.forEach(tab => {
   });
 });
 // ------
-
 
 /* eq eq eq */
 
@@ -1248,21 +1194,7 @@ function draw() {
   gradientFill.addColorStop(0, 'rgba(255, 0, 0, 0.3)'); gradientFill.addColorStop(1, 'rgba(0, 0, 0, 0)');
   let gradientLine = ctx.createLinearGradient(0, 0, w, 0);
   gradientLine.addColorStop(0, '#ff0000'); gradientLine.addColorStop(1, '#990000');
-
-  /*
-  ctx.moveTo(0, h);
-  for (let i = 0; i <= 90; i++) {
-    const percent = i / 90;
-    const exactIndex = Math.exp(Math.log(3) + percent * (Math.log(analyser.frequencyBinCount * 0.75) - Math.log(3)));
-    const valLower = dataArray[Math.floor(exactIndex)] || 0;
-    const valUpper = dataArray[Math.ceil(exactIndex)] || 0;
-    const val = valLower * (1 - (exactIndex - Math.floor(exactIndex))) + valUpper * (exactIndex - Math.floor(exactIndex));
-    
-    const value = (val / 255) * (i < 5 ? 0.8 + (i * 0.04) : 1);
-    ctx.lineTo(percent * w, h - (value * h * 0.5) - 5);
-  }
-  ctx.lineTo(w, h);
-  */
+  
   ctx.moveTo(0, h);
   for (let i = 0; i <= 90; i++) {
     const percent = i / 90;
@@ -1285,7 +1217,6 @@ function draw() {
   
 /* eq eq eq */
 
-  
 document.querySelectorAll('input[type="range"], button').forEach(element => {
   element.addEventListener('mouseup', () => {
     element.blur();

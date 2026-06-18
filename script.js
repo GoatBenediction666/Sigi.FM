@@ -54,7 +54,7 @@ async function loadPlaylistFromArchive(id, cardElement, shouldAutoplay = true) {
     const newGifSource = `https://archive.org/download/${id}/inplay.gif`;
     const tempImg = new Image();
     tempImg.onload = () => { mainGif.src = newGifSource; };
-    tempImg.onerror = () => { mainGif.src = 'shtr.gif'; }; 
+    tempImg.onerror = () => { mainGif.src = 'bruda.gif'; }; 
     tempImg.src = newGifSource;
     
     audio.pause();

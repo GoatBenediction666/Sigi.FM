@@ -653,43 +653,6 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 
 const savedLang = localStorage.getItem('lang') || 'ru';
 loadLanguage(savedLang);
-   
-/*
-const archiveId = 'technos1g1'; 
-const response = await fetch(`https://archive.org/metadata/${archiveId}`);
-const metadata = await response.json();
-const songs = metadata.files
-  .filter(file => file.name.endsWith('.mp3'))
-  .map(file => file.name);
-
-let files = songs.map(f => ({ 
-  name: f, 
-  filename: `https://archive.org/download/${archiveId}/${encodeURIComponent(f)}` 
-}));
-*/
-/*
-const archiveId = 'technos1g1';
-let songs = [];
-let files = [];
-
-try {
-  const response = await fetch(`https://archive.org/metadata/${archiveId}`);
-  if (!response.ok) throw new Error(`server error: ${response.status}`);
-  
-  const metadata = await response.json();
-  songs = metadata.files
-    .filter(file => file.name.endsWith('.mp3'))
-    .map(file => file.name);
-    
-  files = songs.map(f => ({ 
-    name: f, 
-    filename: `https://archive.org/download/${archiveId}/${encodeURIComponent(f)}` 
-  }));
-} catch (e) {
-  console.error("unable to load tracks from archive:", e);
-  trackNameDiv.textContent = "Playlist load error";
-}
-*/
 
 let currentArchiveId = null;
 let songs = [];
@@ -805,9 +768,6 @@ const progress = document.getElementById('progress');
 const currentTimeDiv = document.getElementById('current-time');
 const durationDiv = document.getElementById('duration');
 const volumeSlider = document.getElementById('volume');
-
-//let files = songs.map(f => ({ name: f, filename: 'musics/' + f }));
-//let files = songs.map(f => ({ name: f, filename: 'musics/' + encodeURIComponent(f) }));
   
 let currentTrackIndex = -1;
 let isPlaying = false;
@@ -822,6 +782,8 @@ function formatTime(seconds) {
 
 function createFileList() {
   fileListDiv.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+
   files.forEach((file, index) => {
     const el = document.createElement('div');
     el.className = 'file-item';
@@ -830,17 +792,11 @@ function createFileList() {
     el.textContent = displayName;
     el.dataset.index = index;
     el.onclick = () => loadTrack(index, true);
-    fileListDiv.appendChild(el);
+    fragment.appendChild(el); 
   });
+  fileListDiv.appendChild(fragment); 
 }
 
-/*
-function highlightSelected() {
-  document.querySelectorAll('.file-item').forEach((el, idx) => {
-    el.classList.toggle('active', idx === currentTrackIndex);
-  });
-}
-*/
 /* SMOOTH TRACK LIST */
 function highlightSelected() {
   document.querySelectorAll('.file-item').forEach((el, idx) => {

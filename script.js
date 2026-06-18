@@ -44,7 +44,7 @@ let files = [];
 const mainGif = document.getElementById('main-gif');
 const playlistsGrid = document.getElementById('playlists-grid');
 
-async function loadPlaylistFromArchive(id, cardElement) {
+async function loadPlaylistFromArchive(id, cardElement, shouldAutoplay = true) {
   try {
     document.querySelectorAll('.playlist-card').forEach(c => c.classList.remove('active'));
     if (cardElement) cardElement.classList.add('active');
@@ -83,7 +83,7 @@ async function loadPlaylistFromArchive(id, cardElement) {
 
     if (files.length > 0) {
       createFileList();
-      loadTrack(0, false);
+      loadTrack(0, shouldAutoplay); 
     } else {
       fileListDiv.innerHTML = '<div style="color:red; text-align:center; padding:10px;">Плейлист пуст</div>';
       trackNameDiv.textContent = "Нет треков";
@@ -131,7 +131,7 @@ async function initPlaylists() {
     
     if (playlistIds.length > 0) {
       setTimeout(() => {
-        loadPlaylistFromArchive(playlistIds[0], playlistsGrid.firstChild);
+        loadPlaylistFromArchive(playlistIds[0], playlistsGrid.firstChild, false);
       }, 50);
     }
 

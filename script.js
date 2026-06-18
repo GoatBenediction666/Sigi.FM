@@ -108,10 +108,12 @@ async function initPlaylists() {
       card.className = 'playlist-card';
       
       const coverUrl = `https://archive.org/download/${id}/cover.png`;
-      
-      card.innerHTML = `
-        <img class="playlist-cover" src="${coverUrl}" alt="cover" onerror="this.src='bruda.gif'">
-        <div class="playlist-title" data-title-id="${id}">...</div> `;
+      const archiveCoverUrl = `https://archive.org/services/img/${id}`;
+
+
+      card.innerHTML = `<img class="playlist-cover" src="${coverUrl}" alt="cover" 
+      onerror="if(!this.dataset.triedArchive){ this.dataset.triedArchive='true'; this.src='${archiveCoverUrl}'; } else { this.src='favicon.png'; }">
+      <div class="playlist-title" data-title-id="${id}">...</div> `;
       
       card.onclick = () => loadPlaylistFromArchive(id, card);
       playlistsGrid.appendChild(card);

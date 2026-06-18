@@ -57,14 +57,18 @@ async function loadPlaylistFromArchive(id, cardElement) {
     tempImg.onerror = () => { mainGif.src = 'shtr.gif'; }; 
     tempImg.src = newGifSource;
     
-    if (isPlaying) playBtn.click();
-    audio.src = '';
+    audio.pause();
+    isPlaying = false;
+    playBtn.textContent = '▶';
+    audio.removeAttribute('src'); 
     trackNameDiv.textContent = "Загрузка...";
 
     const response = await fetch(`https://archive.org/metadata/${id}`);
     if (!response.ok) throw new Error(`server error: ${response.status}`);
     
     const metadata = await response.json();
+    
+    if (currentArchiveId !== id) return;
     
     const archiveFiles = metadata.files || [];
 
@@ -107,8 +111,7 @@ async function initPlaylists() {
       
       card.innerHTML = `
         <img class="playlist-cover" src="${coverUrl}" alt="cover" onerror="this.src='shtr.gif'">
-        <div class="playlist-title" data-title-id="${id}">...</div>
-      `;
+        <div class="playlist-title" data-title-id="${id}">...</div> `;
       
       card.onclick = () => loadPlaylistFromArchive(id, card);
       playlistsGrid.appendChild(card);

@@ -719,8 +719,11 @@ async function loadPlaylistFromArchive(id, cardElement) {
     if (!response.ok) throw new Error(`server error: ${response.status}`);
     
     const metadata = await response.json();
-    songs = metadata.files
-      .filter(file => file.name.endsWith('.mp3'))
+    
+    const archiveFiles = metadata.files || [];
+
+    songs = archiveFiles
+      .filter(file => file.name && file.name.endsWith('.mp3'))
       .map(file => file.name);
       
     files = songs.map(f => ({ 

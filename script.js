@@ -95,6 +95,7 @@ async function loadPlaylistFromArchive(id, cardElement, shouldAutoplay = true) {
   }
 }
 
+/*
 async function initPlaylists() {
   try {
     const res = await fetch('playlists.json');
@@ -143,7 +144,61 @@ async function initPlaylists() {
   }
 }
 initPlaylists();
-  
+*/
+
+async function initPlaylists() {
+  try {
+    const res = await fetch('playlists.json');
+    if (!res.ok) throw new Error("JSON не найден");
+    const playlistIds = await res.json();
+    
+    playlistsGrid.innerHTML = ''; 
+
+    playlistIds.forEach(id => {
+      const card = document.createElement('div');
+      card.className = 'playlist-card';
+      
+      const coverUrl = `https://archive.org/download/${id}/cover.png`;
+      const archiveCoverUrl = `https://archive.org/services/img/${id}`;
+
+      card.innerHTML = `<img class="playlist-cover" src="${coverUrl}" alt="cover" 
+      onerror="if(!this.dataset.triedArchive){ this.dataset.triedArchive='true'; this.src='${archiveCoverUrl}'; } else { this.src='favicon.png'; }">
+      <div class="playlist-title" data-title-id="${id}">...</div> `;
+      
+      card.onclick = () => loadPlaylistFromArchive(id, card);
+      playlistsGrid.appendChild(card);
+    });
+    
+    if (playlistIds.length > 0) {
+      loadPlaylistFromArchive(playlistIds[0], playlistsGrid.firstChild, false);
+    }
+
+    setTimeout(() => {
+      playlistIds.forEach(id => {
+        fetch(`https://archive.org/metadata/${id}`)
+          .then(r => r.json())
+          .then(data => {
+            const titleText = data.metadata.title || id;
+            const titleDiv = playlistsGrid.querySelector(`[data-title-id="${id}"]`);
+            if (titleDiv) {
+              titleDiv.textContent = titleText;
+              titleDiv.setAttribute('title', titleText);
+            }
+          })
+          .catch(() => {
+            const titleDiv = playlistsGrid.querySelector(`[data-title-id="${id}"]`);
+            if (titleDiv) titleDiv.textContent = id;
+          });
+      });
+    }, 100);
+
+  } catch (e) {
+    console.error("Не удалось прочитать playlists.json", e);
+    playlistsGrid.innerHTML = '<p>Не удалось загрузить списки.</p>';
+  }
+}
+initPlaylists();
+
 const fileListDiv = document.getElementById('file-list');
 const audio = document.getElementById('audio');
 const playBtn = document.getElementById('play');
